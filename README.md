@@ -54,3 +54,4 @@ This is a Streamlit application that demonstrates Auth0 authentication flow and 
     - Make sure that callback URL is allowed in the Auth0 app settings.
 3. Enable the "Authorization Code" grant type
 4. Configure the application settings and copy the credentials to your `.env` file 
+5. For the user profile to show up, you need to have `profile` configured as a scope returned by your Auth0 app (i.e. you should see `"scope": "profile"` in your decoded JWT.)

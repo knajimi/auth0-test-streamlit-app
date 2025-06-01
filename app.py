@@ -5,6 +5,7 @@ import jwt as pyjwt
 from dotenv import load_dotenv
 from authlib.integrations.requests_client import OAuth2Session
 from urllib.parse import urlencode
+import requests
 
 # Load environment variables
 load_dotenv()
@@ -71,6 +72,19 @@ def decode_jwt(token):
         st.error(f"Error decoding JWT: {str(e)}")
         return None
 
+def get_user_profile(access_token):
+    """Fetch user profile information from Auth0"""
+    try:
+        response = requests.get(
+            f"https://{AUTH0_DOMAIN}/userinfo",
+            headers={"Authorization": f"Bearer {access_token}"}
+        )
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        st.error(f"Error fetching user profile: {str(e)}")
+        return None
+
 def main():
     st.title("Auth0 Login Test App")
     
@@ -91,6 +105,12 @@ def main():
         decoded_token = decode_jwt(st.session_state.token["access_token"])
         if decoded_token:
             st.json(decoded_token)
+        
+        # Fetch and display user profile
+        st.subheader("User Profile")
+        user_profile = get_user_profile(st.session_state.token["access_token"])
+        if user_profile:
+            st.json(user_profile)
         
         # Logout button
         if st.button("Logout"):
